@@ -15,7 +15,8 @@ module Spec
     end
 
     def default_bundle_path(*path)
-      bundled_app(".bundle", Bundler.ruby_scope, *path)
+      spec_scope = "#{ENV['BUNDLER_SPEC_RUBY_ENGINE']}/#{Bundler.rubygems.config_map[:ruby_version]}"
+      bundled_app(".bundle", spec_scope, *path)
     end
 
     def bundled_app(*path)
