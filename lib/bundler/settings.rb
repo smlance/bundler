@@ -155,26 +155,36 @@ module Bundler
     end
 
     def set_with(array, options = {})
+
       enum = array.to_set
+      $stderr.puts "set_with: array is #{array}"
+      $stderr.puts "set_with: enum is #{enum.inspect}"
       opposite_group = to_set( config_for_symbol( options.fetch :config, :current )[without_key] )
+      $stderr.puts "set_with: opposite_group is #{opposite_group.inspect}"
       resolve_conflicts(enum, opposite_group)
       break_with_without_cache!
       set_array(:with, enum, options)
     end
 
     def set_without(array, options = {})
+
       enum = array.to_set
+      $stderr.puts "set_with: array is #{array}"
+      $stderr.puts "set_with: enum is #{enum.inspect}"
       opposite_group = to_set( config_for_symbol( options.fetch :config, :current )[with_key] )
+      $stderr.puts "set_with: opposite_group is #{opposite_group.inspect}"
       resolve_conflicts(enum, opposite_group)
       break_with_without_cache!
       set_array(:without, enum, options)
     end
 
     def without
+      $stderr.puts "without: get_with_and_without[1].to_a: #{get_with_and_without[1].to_a}"
       get_with_and_without[1].to_a
     end
 
     def with
+      $stderr.puts "with: get_with_and_without[0].to_a: #{get_with_and_without[0].to_a}"
       get_with_and_without[0].to_a
     end
 
@@ -244,11 +254,15 @@ module Bundler
     end
 
     def get_with_and_without
+      $stderr.puts "get_with_and_without: @with_and_without: #{@with_and_without}"
+#      $stderr.puts "get_with_and_without: @with_and_without: #{@with_and_without}"
       @with_and_without ||= resolve_with_without_groups
     end
 
     def resolve_with_without_groups
       reverse_config = all_configs.reverse
+      $stderr.puts "resolve_with_without_groups: all_configs: #{all_configs}"
+      $stderr.puts "resolve_with_without_groups: reverse_config: #{reverse_config}"
       with, without = reverse_config.map.with_index do |c, i|
         superior_configs = reverse_config.slice((i+1)..-1)
         override_from_superior_configs c, superior_configs
@@ -269,7 +283,10 @@ module Bundler
     end
 
     def resolve_conflicts(array1, array2)
+      $stderr.puts "array1 is #{array1.inspect}"
+      $stderr.puts "array2 is #{array2.inspect}"
       array1, array2 = to_array(array1), to_array(array2)
+
       raise ArgumentError, conflicting_groups_message if groups_conflict? array1, array2
     end
 

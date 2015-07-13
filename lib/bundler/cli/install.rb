@@ -12,9 +12,18 @@ module Bundler
 
       [:with, :without].each do |option|
         if options[option]
+          $stderr.puts "run: We got :#{option}: #{options[option]}!"
           options[option] = options[option].join(":").tr(" ", ":").split(":")
+
         end
       end
+      $stderr.puts "run: options.fetch(:without, []) is #{options.fetch(:without, [])}"
+      $stderr.puts "run: options.fetch(:with, []) is #{options.fetch(:with, [])}"
+
+
+
+      $stderr.puts "run: options[:with] is #{options[:with] || 'nil'}"
+      $stderr.puts "run: options[:without] is #{options[:without]}"
 
       ENV['RB_USER_INSTALL'] = '1' if Bundler::FREEBSD
 
@@ -59,6 +68,13 @@ module Bundler
         options[:system] = true
       end
 
+      $stderr.puts "run: options.fetch(:without, []) is #{options.fetch(:without, [])}"
+      $stderr.puts "run: options.fetch(:with, []) is #{options.fetch(:with, [])}"
+
+
+      $stderr.puts "run: options[:with] is #{options[:with] || 'nil'} (just to make sure)"
+      $stderr.puts "run: options[:without] is #{options[:without]} (just to make sure)"
+
       Bundler.settings[:path]     = nil if options[:system]
       Bundler.settings[:path]     = "vendor/bundle" if options[:deployment]
       Bundler.settings[:path]     = options["path"] if options["path"]
@@ -68,10 +84,23 @@ module Bundler
       Bundler.settings[:no_prune] = true if options["no-prune"]
       Bundler.settings[:no_install] = true if options["no-install"]
       Bundler.settings[:clean]    = options["clean"] if options["clean"]
-      Bundler.settings.with       = options.fetch(:with, [])
-      Bundler.settings.without    = options.fetch(:without, [])
+      Bundler.settings.set_without options[:without].to_a
+      Bundler.settings.set_with options[:with].to_a
+      # Bundler.settings.without    = options.fetch(:without, [])
+      # Bundler.settings.with       = options.fetch(:with, [])
+      #Bundler.settings.without    = options.fetch(:without, [])
       Bundler::Fetcher.disable_endpoint = options["full-index"]
       Bundler.settings[:disable_shared_gems] = Bundler.settings[:path] ? '1' : nil
+
+      # $stderr.puts "run: options[:without] is #{options[:without]} (just to make sure)"
+      # $stderr.puts "run: options[:with] is #{options[:with] || 'nil'} (just to make sure)"
+
+      $stderr.puts "run: options.fetch(:without, []) is #{options.fetch(:without, [])}"
+      $stderr.puts "run: options.fetch(:with, []) is #{options.fetch(:with, [])}"
+
+
+      $stderr.puts "run: Bundler.settings.with is #{Bundler.settings.with}"
+      $stderr.puts "run: Bundler.settings.without is #{Bundler.settings.without}"
 
       # rubygems plugins sometimes hook into the gem install process
       Gem.load_env_plugins if Gem.respond_to?(:load_env_plugins)
@@ -114,6 +143,9 @@ module Bundler
         require "bundler/cli/clean"
         Bundler::CLI::Clean.new(options).run
       end
+      $stderr.puts "run: options[:with] is #{options[:with] || 'nil'} (just to make sure)"
+      $stderr.puts "run: options[:without] is #{options[:without]} (just to make sure)"
+
     rescue GemNotFound, VersionConflict => e
       if options[:local] && Bundler.app_cache.exist?
         Bundler.ui.warn "Some gems seem to be missing from your #{Bundler.settings.app_cache_path} directory."

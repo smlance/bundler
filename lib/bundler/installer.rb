@@ -54,6 +54,7 @@ module Bundler
       create_bundle_path
 
       if Bundler.settings[:frozen]
+        $stderr.puts "YES, FROZEN"
         @definition.ensure_equivalent_gemfile_and_lockfile(options[:deployment])
       end
 

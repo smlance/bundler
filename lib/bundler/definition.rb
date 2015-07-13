@@ -342,6 +342,8 @@ module Bundler
       deleted = []
       changed = []
 
+      $stderr.puts "YES, ENSURING"
+
       gemfile_sources = sources.lock_sources
       if @locked_sources != gemfile_sources
         new_sources = gemfile_sources - @locked_sources

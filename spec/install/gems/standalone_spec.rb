@@ -158,7 +158,7 @@ describe "bundle install --standalone" do
 
     it "allows remembered --without to limit the groups used in a standalone" do
       bundle "install --without test"
-      bundle "install --standalone"
+      bundle "install --without test --standalone"
 
       load_error_ruby <<-RUBY, 'spec', :no_lib => true
         $:.unshift File.expand_path("bundle")
