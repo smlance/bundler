@@ -43,14 +43,7 @@ module Bundler
 
     def set_config(key, value, options = {})
       config = options.fetch(:config, :current)
-      case config
-      when :current
-        set_current(key, value)
-      when :global
-        set_global(key, value)
-      when :local
-        set_local(key, value)
-      end
+      self.send("set_#{config.to_sym}", key, value)
     end
 
     def set_current(key, value)
@@ -196,7 +189,7 @@ module Bundler
     end
 
     def groups_conflict?(group_one, group_two)
-      group_one.to_set.intersect? group_two.to_set
+      !(group_one.to_set & group_two.to_set).empty?
     end
 
     # @local_config["BUNDLE_PATH"] should be prioritized over ENV["BUNDLE_PATH"]

@@ -183,15 +183,15 @@ describe Bundler::Settings do
   describe "#groups_conflict?" do
     context "when two arrays have same value" do
       it "returns true" do
-        array1 = %i(alpha beta gamma)
-        array2 = %i(gamma delta epsilon)
+        array1 = [:alpha, :beta, :gamma]
+        array2 = [:gamma, :delta, :epsilon]
         expect( settings.groups_conflict? array1, array2 ).to be_truthy
       end
     end
     context "when two arrays don't share values" do
       it "returns false" do
-        array1 = %i(alpha beta gamma)
-        array2 = %i(delta epsilon zeta)
+        array1 = [:alpha, :beta, :gamma]
+        array2 = [:delta, :epsilon, :zeta]
         expect( settings.groups_conflict? array1, array2 ).to be_falsy
       end
     end
@@ -199,56 +199,56 @@ describe Bundler::Settings do
 
   describe "#with" do
     it "returns all with keys" do
-      settings.set_with %i(beta gamma), :config => :local
-      settings.set_with %i(delta alpha)
+      settings.set_with [:beta, :gamma], :config => :local
+      settings.set_with [:delta, :alpha]
       expect(settings.with).to include(:alpha, :beta, :gamma, :delta)
     end
 
     it "overrides all other without groups" do
-      settings.set_without %i(beta gamma), :config => :local
-      settings.set_with %i(delta beta)
+      settings.set_without [:beta, :gamma], :config => :local
+      settings.set_with [:delta, :beta]
       expect(settings.with).to include(:beta)
     end
   end
 
   describe "#without" do
     it "returns all with keys" do
-      settings.set_without %i(beta gamma), :config => :local
-      settings.set_without %i(delta alpha)
+      settings.set_without [:beta, :gamma], :config => :local
+      settings.set_without [:delta, :alpha]
       expect(settings.without).to include(:alpha, :beta, :gamma, :delta)
     end
 
     it "overrides all other with groups" do
-      settings.set_with %i(beta gamma), :config => :local
-      settings.set_without %i(delta beta)
+      settings.set_with [:beta, :gamma], :config => :local
+      settings.set_without [:delta, :beta]
       expect(settings.without).to include(:beta)
     end
   end
 
   describe "#set_with" do
     it "allows setting any config" do
-      settings.set_with %i(beta gamma), :config => :local
+      settings.set_with [:beta, :gamma], :config => :local
       expect(settings.locations(:with)).to have_key(:local)
     end
 
     context "when same level groups conflict" do
       it "raises an error" do
-        settings.set_without %i(beta gamma), :config => :local
-        expect{settings.set_with(%i(delta beta), :config => :local)}.to raise_error ArgumentError
+        settings.set_without [:beta, :gamma], :config => :local
+        expect{settings.set_with([:delta, :beta], :config => :local)}.to raise_error ArgumentError
       end
     end
   end
 
   describe "#set_without" do
     it "allows setting any config" do
-      settings.set_without %i(beta gamma), :config => :local
+      settings.set_without [:beta, :gamma], :config => :local
       expect(settings.locations(:without)).to have_key(:local)
     end
 
     context "when same level groups conflict" do
       it "raises an error" do
-        settings.set_with %i(beta gamma), :config => :local
-        expect{settings.set_without(%i(delta beta), :config => :local)}.to raise_error ArgumentError
+        settings.set_with [:beta, :gamma], :config => :local
+        expect{settings.set_without([:delta, :beta], :config => :local)}.to raise_error ArgumentError
       end
     end
   end
