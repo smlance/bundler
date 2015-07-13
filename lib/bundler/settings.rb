@@ -27,18 +27,8 @@ module Bundler
       end
     end
 
-    # In Bundler pre 2.0 any command ever set was stored in the local config
-    # file. In Bundler 2.0 they are only saved for that current command and
-    # `bundle config <setting name> <setting value>` is used for setting
-    # remembered arguments.
-    # See https://trello.com/c/yGsPNDpg
     def []=(key, value)
-      @use_current ||= (Bundler::VERSION.split(".")[0].to_i >= 2)
-      if @use_current
-        set_current(key, value)
-      else
-        set_local(key, value)
-      end
+      set_current(key, value)
     end
 
     def set_config(key, value, options = {})
