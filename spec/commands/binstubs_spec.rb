@@ -130,7 +130,7 @@ describe "bundle binstubs <gem>" do
       expect(bundled_app("exec/rackup")).to exist
     end
 
-    it "setting is saved for bundle install" do
+    it "setting is not saved for bundle install" do
       install_gemfile <<-G
         source "file://#{gem_repo1}"
         gem "rack"
@@ -138,9 +138,9 @@ describe "bundle binstubs <gem>" do
       G
 
       bundle "binstubs rack --path exec"
-      bundle :install
+      bundle "install"
 
-      expect(bundled_app("exec/rails")).to exist
+      expect(bundled_app("exec/rails")).not_to exist
     end
   end
 

@@ -95,7 +95,7 @@ require "spec_helper"
         gem "bar", :path => '#{lib_path("bar-1.0")}'
       G
 
-      bundle cmd
+      bundle "#{cmd} --all"
       expect(bundled_app("vendor/cache/bar-1.0")).to exist
     end
 
