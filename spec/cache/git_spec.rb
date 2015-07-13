@@ -161,7 +161,7 @@ end
       G
 
       bundle "#{cmd} --all"
-      bundle "#{cmd}"
+      bundle "#{cmd} --all"
 
       expect(out).not_to include("Your Gemfile contains path and git dependencies.")
     end
