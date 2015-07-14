@@ -254,15 +254,15 @@ module Bundler
     end
 
     def get_with_and_without
-      $stderr.puts "get_with_and_without: @with_and_without: #{@with_and_without}"
+#      $stderr.puts "get_with_and_without: @with_and_without: #{@with_and_without}"
 #      $stderr.puts "get_with_and_without: @with_and_without: #{@with_and_without}"
       @with_and_without ||= resolve_with_without_groups
     end
 
     def resolve_with_without_groups
       reverse_config = all_configs.reverse
-      $stderr.puts "resolve_with_without_groups: all_configs: #{all_configs}"
-      $stderr.puts "resolve_with_without_groups: reverse_config: #{reverse_config}"
+ #     $stderr.puts "resolve_with_without_groups: all_configs: #{all_configs}"
+  #    $stderr.puts "resolve_with_without_groups: reverse_config: #{reverse_config}"
       with, without = reverse_config.map.with_index do |c, i|
         superior_configs = reverse_config.slice((i+1)..-1)
         override_from_superior_configs c, superior_configs
@@ -278,19 +278,39 @@ module Bundler
     end
 
     def resolve_all_conflicts
+      # TODO: This may have to be changed as well (see changes made to resolve_conflicts)
       cgs = conflicting_groups
       raise ArgumentError, conflicting_groups_message(cgs) unless cgs.empty?
     end
 
-    def resolve_conflicts(array1, array2)
-      $stderr.puts "array1 is #{array1.inspect}"
-      $stderr.puts "array2 is #{array2.inspect}"
-      array1, array2 = to_array(array1), to_array(array2)
 
-      raise ArgumentError, conflicting_groups_message if groups_conflict? array1, array2
+    def conflicting_groups
+      # TODO: resume debugging here; it looks like locations(:with) and locations(:without) are not
+      # being properly set.
+      with_locations, without_locations = locations(:with), locations(:without)
+      $stderr.puts "locations(:with) is #{locations(:with)}"
+      $stderr.puts "locations(:without) is #{locations(:without)}"
+      (with_locations.keys & without_locations.keys).map do |key|
+        groups = [to_set(with_locations[key]), to_set(without_locations[key])]
+        groups_conflict?(*groups) ? [key, groups] : nil
+      end.compact.to_h
     end
 
-    def conflicting_groups_message(cgs = [])
+    def resolve_conflicts(array1, array2)
+      array1, array2 = to_array(array1).map(&:to_sym), to_array(array2).map(&:to_sym)
+      cgs = array1 & array2
+      # FIXME: `conflicting_groups` doesn't return the conflicting groups.
+      unless cgs.empty?
+        Bundler.ui.error "--with and --without cannot share groups. " \
+         "The offending groups are: #{cgs.join(", ")}. "#\
+         #"#{conflicting_groups_message(cgs)}"
+        exit 1
+      end
+    end
+
+    def conflicting_groups_message(cgs = {})
+      # cgs must be a hash of the given format. If it's not, Bundler will
+      # print an "unexpected error" message.
       msg = "With and without groups cannot conflict."
       cgs.each do |k, (w, wo)|
         msg += "\n#{key}: #{message_for_config(k)}"
@@ -298,14 +318,6 @@ module Bundler
         msg += "\n\twith: #{w.join(',')}"
       end
       msg
-    end
-
-    def conflicting_groups
-      with_locations, without_locations = locations(:with), locations(:without)
-      (with_locations.keys & without_locations.keys).map do |key|
-        groups = [to_set(with_locations[key]), to_set(without_locations[key])]
-        groups_conflict?(*groups) ? [key, groups] : nil
-      end.compact.to_h
     end
 
     def key_for(key)
@@ -354,7 +366,7 @@ module Bundler
     def to_array(string_or_enum)
       return [] if string_or_enum.nil?
       return string_or_enum unless string_or_enum.respond_to? :split
-      string_or_enum.split(":").map { |w| w.to_sym }
+      string_or_enum.split(":")#.map { |w| w.to_sym }
     end
 
     def to_set(string_or_enum)
