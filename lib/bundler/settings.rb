@@ -1,4 +1,5 @@
 require 'uri'
+require 'set'
 
 module Bundler
   class Settings
@@ -157,10 +158,10 @@ module Bundler
     def set_with(array, options = {})
 
       enum = array.to_set
-      $stderr.puts "set_with: array is #{array}"
-      $stderr.puts "set_with: enum is #{enum.inspect}"
+      #$stderr.puts "set_with: array is #{array}"
+      #$stderr.puts "set_with: enum is #{enum.inspect}"
       opposite_group = to_set( config_for_symbol( options.fetch :config, :current )[without_key] )
-      $stderr.puts "set_with: opposite_group is #{opposite_group.inspect}"
+      #$stderr.puts "set_with: opposite_group is #{opposite_group.inspect}"
       resolve_conflicts(enum, opposite_group)
       break_with_without_cache!
       set_array(:with, enum, options)
@@ -169,22 +170,22 @@ module Bundler
     def set_without(array, options = {})
 
       enum = array.to_set
-      $stderr.puts "set_with: array is #{array}"
-      $stderr.puts "set_with: enum is #{enum.inspect}"
+      #$stderr.puts "set_with: array is #{array}"
+      #$stderr.puts "set_with: enum is #{enum.inspect}"
       opposite_group = to_set( config_for_symbol( options.fetch :config, :current )[with_key] )
-      $stderr.puts "set_with: opposite_group is #{opposite_group.inspect}"
+      #$stderr.puts "set_with: opposite_group is #{opposite_group.inspect}"
       resolve_conflicts(enum, opposite_group)
       break_with_without_cache!
       set_array(:without, enum, options)
     end
 
     def without
-      $stderr.puts "without: get_with_and_without[1].to_a: #{get_with_and_without[1].to_a}"
+      #$stderr.puts "without: get_with_and_without[1].to_a: #{get_with_and_without[1].to_a}"
       get_with_and_without[1].to_a
     end
 
     def with
-      $stderr.puts "with: get_with_and_without[0].to_a: #{get_with_and_without[0].to_a}"
+      #$stderr.puts "with: get_with_and_without[0].to_a: #{get_with_and_without[0].to_a}"
       get_with_and_without[0].to_a
     end
 
@@ -255,7 +256,7 @@ module Bundler
 
     def get_with_and_without
 #      $stderr.puts "get_with_and_without: @with_and_without: #{@with_and_without}"
-#      $stderr.puts "get_with_and_without: @with_and_without: #{@with_and_without}"
+
       @with_and_without ||= resolve_with_without_groups
     end
 
@@ -274,6 +275,8 @@ module Bundler
       all_values_for_key = proc {|key| superiors.flat_map { |c| to_array(c[key]) } }
       vetted_with = to_set(config[with_key]) - all_values_for_key[without_key]
       vetted_without = to_set(config[without_key]) - all_values_for_key[with_key]
+#      $stderr.puts "with_key: #{with_key}"
+#      $stderr.puts "config[with_key]: #{config[with_key]}"
       [vetted_with, vetted_without]
     end
 
@@ -288,8 +291,8 @@ module Bundler
       # TODO: resume debugging here; it looks like locations(:with) and locations(:without) are not
       # being properly set.
       with_locations, without_locations = locations(:with), locations(:without)
-      $stderr.puts "locations(:with) is #{locations(:with)}"
-      $stderr.puts "locations(:without) is #{locations(:without)}"
+      #$stderr.puts "locations(:with) is #{locations(:with)}"
+      #$stderr.puts "locations(:without) is #{locations(:without)}"
       (with_locations.keys & without_locations.keys).map do |key|
         groups = [to_set(with_locations[key]), to_set(without_locations[key])]
         groups_conflict?(*groups) ? [key, groups] : nil
@@ -366,7 +369,7 @@ module Bundler
     def to_array(string_or_enum)
       return [] if string_or_enum.nil?
       return string_or_enum unless string_or_enum.respond_to? :split
-      string_or_enum.split(":")#.map { |w| w.to_sym }
+      string_or_enum.split(":").map { |w| w.to_sym }
     end
 
     def to_set(string_or_enum)

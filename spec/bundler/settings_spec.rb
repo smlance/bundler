@@ -232,9 +232,10 @@ describe Bundler::Settings do
     end
 
     context "when same level groups conflict" do
-      it "raises an error" do
+      it "exit with an error" do
         settings.set_without [:beta, :gamma], :config => :local
-        expect{settings.set_with([:delta, :beta], :config => :local)}.to raise_error ArgumentError
+        expect{settings.set_with([:delta, :beta], :config => :local)}.to raise_error SystemExit
+        # TODO: check the error message
       end
     end
   end
@@ -246,9 +247,10 @@ describe Bundler::Settings do
     end
 
     context "when same level groups conflict" do
-      it "raises an error" do
+      it "exit with an error" do
         settings.set_with [:beta, :gamma], :config => :local
-        expect{settings.set_without([:delta, :beta], :config => :local)}.to raise_error ArgumentError
+        expect{settings.set_without([:delta, :beta], :config => :local)}.to raise_error SystemExit
+        # TODO: check the error message
       end
     end
   end

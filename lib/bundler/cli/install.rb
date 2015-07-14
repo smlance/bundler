@@ -17,13 +17,13 @@ module Bundler
 
         end
       end
-      $stderr.puts "run: options.fetch(:without, []) is #{options.fetch(:without, [])}"
-      $stderr.puts "run: options.fetch(:with, []) is #{options.fetch(:with, [])}"
+      #$stderr.puts "run: options.fetch(:without, []) is #{options.fetch(:without, [])}"
+      #$stderr.puts "run: options.fetch(:with, []) is #{options.fetch(:with, [])}"
 
 
 
-      $stderr.puts "run: options[:with] is #{options[:with] || 'nil'}"
-      $stderr.puts "run: options[:without] is #{options[:without]}"
+      #$stderr.puts "run: options[:with] is #{options[:with] || 'nil'}"
+      #$stderr.puts "run: options[:without] is #{options[:without]}"
 
       ENV['RB_USER_INSTALL'] = '1' if Bundler::FREEBSD
 
@@ -68,12 +68,12 @@ module Bundler
         options[:system] = true
       end
 
-      $stderr.puts "run: options.fetch(:without, []) is #{options.fetch(:without, [])}"
-      $stderr.puts "run: options.fetch(:with, []) is #{options.fetch(:with, [])}"
+      #$stderr.puts "run: options.fetch(:without, []) is #{options.fetch(:without, [])}"
+      #$stderr.puts "run: options.fetch(:with, []) is #{options.fetch(:with, [])}"
 
 
-      $stderr.puts "run: options[:with] is #{options[:with] || 'nil'} (just to make sure)"
-      $stderr.puts "run: options[:without] is #{options[:without]} (just to make sure)"
+      #$stderr.puts "run: options[:with] is #{options[:with] || 'nil'} (just to make sure)"
+      #$stderr.puts "run: options[:without] is #{options[:without]} (just to make sure)"
 
       Bundler.settings[:path]     = nil if options[:system]
       Bundler.settings[:path]     = "vendor/bundle" if options[:deployment]
@@ -86,6 +86,7 @@ module Bundler
       Bundler.settings[:clean]    = options["clean"] if options["clean"]
       Bundler.settings.set_without options[:without].to_a
       Bundler.settings.set_with options[:with].to_a
+      # FIXME: `fetch` doesn't return the with and without groups provided.
       # Bundler.settings.without    = options.fetch(:without, [])
       # Bundler.settings.with       = options.fetch(:with, [])
       #Bundler.settings.without    = options.fetch(:without, [])
@@ -95,12 +96,12 @@ module Bundler
       # $stderr.puts "run: options[:without] is #{options[:without]} (just to make sure)"
       # $stderr.puts "run: options[:with] is #{options[:with] || 'nil'} (just to make sure)"
 
-      $stderr.puts "run: options.fetch(:without, []) is #{options.fetch(:without, [])}"
-      $stderr.puts "run: options.fetch(:with, []) is #{options.fetch(:with, [])}"
+#      $stderr.puts "run: options.fetch(:without, []) is #{options.fetch(:without, [])}"
+ #     $stderr.puts "run: options.fetch(:with, []) is #{options.fetch(:with, [])}"
 
 
-      $stderr.puts "run: Bundler.settings.with is #{Bundler.settings.with}"
-      $stderr.puts "run: Bundler.settings.without is #{Bundler.settings.without}"
+  #    $stderr.puts "run: Bundler.settings.with is #{Bundler.settings.with}"
+   #   $stderr.puts "run: Bundler.settings.without is #{Bundler.settings.without}"
 
       # rubygems plugins sometimes hook into the gem install process
       Gem.load_env_plugins if Gem.respond_to?(:load_env_plugins)
@@ -143,8 +144,8 @@ module Bundler
         require "bundler/cli/clean"
         Bundler::CLI::Clean.new(options).run
       end
-      $stderr.puts "run: options[:with] is #{options[:with] || 'nil'} (just to make sure)"
-      $stderr.puts "run: options[:without] is #{options[:without]} (just to make sure)"
+#      $stderr.puts "run: options[:with] is #{options[:with] || 'nil'} (just to make sure)"
+ #     $stderr.puts "run: options[:without] is #{options[:without]} (just to make sure)"
 
     rescue GemNotFound, VersionConflict => e
       if options[:local] && Bundler.app_cache.exist?

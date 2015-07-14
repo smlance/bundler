@@ -156,7 +156,7 @@ describe "bundle install --standalone" do
       expect(out).to eq("2.3.2")
     end
 
-    it "allows remembered --without to limit the groups used in a standalone" do
+    it "allows forgotten --without to limit the groups used in a standalone" do
       bundle "install --without test"
       bundle "install --without test --standalone"
 
