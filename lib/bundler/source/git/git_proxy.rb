@@ -26,9 +26,8 @@ module Bundler
         end
       end
 
-      # The GitProxy is responsible to interact with git repositories.
-      # All actions required by the Git source is encapsulated in this
-      # object.
+      # The GitProxy object is responsible for interacting with git repositories.
+      # All actions required by the Git source are encapsulated in this object.
       class GitProxy
         attr_accessor :path, :uri, :ref
         attr_writer :revision
